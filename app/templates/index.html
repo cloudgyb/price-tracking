@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>价格追踪</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #f9f9f9;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 32px 40px 24px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+        }
+        .big-input {
+            width: 100%;
+            font-size: 1.4em;
+            padding: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1em;
+            background: #0078d4;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 24px;
+        }
+        .submit-btn:hover {
+            background: #005fa3;
+        }
+        .description {
+            color: #555;
+            font-size: 1.05em;
+            line-height: 1.7;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form action="/" method="get">
+            <input class="big-input" type="text" name="url" placeholder="请输入您要追踪的商品链接" required>
+            <button class="submit-btn" type="submit">提交</button>
+        </form>
+        {% if err %}
+            <div style="color:red;text-align:center;margin-bottom:20px;">{{ err }}</div>
+        {% endif %}
+        {% if prices %}
+        <div class="description">
+            <h2>价格趋势</h2>
+            <div id="price-chart" style="width:100%;height:400px;margin-bottom:24px;"></div>
+            <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+            <script>
+                var chartDom = document.getElementById('price-chart');
+                var myChart = echarts.init(chartDom);
+                var option = {
+                    title: { text: '' },
+                    tooltip: { trigger: 'axis' },
+                    xAxis: {
+                        type: 'category',
+                        data: ['{{ dates|map('string')|join("','")|safe }}'],
+                        name: '时间'
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: '价格'
+                    },
+                    series: [{
+                        data: [{{ prices|join(', ') }}],
+                        type: 'line'
+                    }]
+                };
+                myChart.setOption(option);
+            </script>
+        {% else %}
+        <div class="description">
+            <p>欢迎使用价格追踪工具！<br>
+            在上方输入您想要追踪的商品链接或名称，点击提交后，我们会帮您监控价格变动，第一时间通知您。</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

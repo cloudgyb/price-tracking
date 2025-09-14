@@ -21,13 +21,17 @@ class MySQLDatabase:
             self.conn.commit()
             return cursor.lastrowid
 
-    def read(self, table, where=None):
+    def read(self, table, where=None, order_by=None, limit=None):
         sql = f"SELECT * FROM {table}"
         params = ()
         if where:
             keys = ' AND '.join([f"{k}=%s" for k in where])
             sql += f" WHERE {keys}"
             params = tuple(where.values())
+        if order_by:
+            sql += f" ORDER BY {order_by}"
+        if limit:
+            sql += f" LIMIT {limit}"
         with self.conn.cursor() as cursor:
             cursor.execute(sql, params)
             return cursor.fetchall()
