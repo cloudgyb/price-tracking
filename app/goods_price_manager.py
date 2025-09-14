@@ -6,17 +6,16 @@ class GoodsPriceManager:
         self.db = db
         self.table = "goods_price"
 
-    def add_price(self, goods_id: int, price: float, date: str) -> int:
+    def add_price(self, goods_price: GoodsPrice) -> int:
         data = {
-            "goods_id": goods_id,
-            "price": price,
-            "date": date
+            "goods_id": goods_price.goods_id,
+            "price": goods_price.price
         }
         return self.db.create(self.table, data)
 
-    def get_prices(self, goods_id: int = None, limit: int = 365):
+    def get_prices(self, goods_id: int = None, limit: int = 365) -> list:
         where = {"goods_id": goods_id} if goods_id is not None else None
-        rows = self.db.read(self.table, where, order_by="date DESC", limit=limit)
+        rows = self.db.read(self.table, where, order_by="create_time DESC", limit=limit)
         return [GoodsPrice(**row) for row in rows]
 
     def update_price(self, id: int, price: float = None, date: str = None) -> int:

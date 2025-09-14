@@ -33,6 +33,7 @@ class MySQLDatabase:
         if limit:
             sql += f" LIMIT {limit}"
         with self.conn.cursor() as cursor:
+            cursor.execute('SET time_zone="+08:00"')  # 设置时区为北京时间
             cursor.execute(sql, params)
             return cursor.fetchall()
 
@@ -56,3 +57,6 @@ class MySQLDatabase:
 
     def close(self):
         self.conn.close()
+
+    def __del__(self):
+        self.close()

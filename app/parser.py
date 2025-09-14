@@ -1,12 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
-import requests
-from requests.utils import get_environ_proxies
-
 
 def parse_html(url):
     try:
-        print("当前环境代理设置：", get_environ_proxies("http://example.com"))
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
             'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
@@ -25,6 +21,7 @@ def parse_html(url):
             price = price_tags.text.strip()
         if price and price.startswith('¥'):
             price = price[1:]
+            price = price.strip()
     
         return {
             'title': title,

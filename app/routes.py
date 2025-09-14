@@ -1,12 +1,13 @@
 from flask import Blueprint,jsonify,render_template,request
 from urllib.parse import urlparse,urlunparse
-from .parser import parse_html
 from .goods_manager import GoodsManager
 from .db import MySQLDatabase
+from .goods_price_vo import GoodsPricesVo
+from datetime import datetime
 
 app = Blueprint('app', __name__)
 db = MySQLDatabase(host='localhost',user='root',
-                   password='password',db='price_tracking')
+                   password='123456',db='price_tracking')
 gm = GoodsManager(db)
 
 @app.before_app_request
@@ -35,15 +36,7 @@ def method_name():
         '',
         ''
     ))
-    goods = gm.get_goods_by_url(url_clean)
-    if goods:
-        return render_template('index.html', **model)
-    m = parse_html(url)
-    model = {
-        "url": url,
-        "title": "My Website",
-        "dates": ["2023-01-01", "2023-02-01", "2023-03-01", "2023-04-01", "2023-05-01",
-                  "2023-06-01","2023-07-01","2023-08-01"],
-        "prices": [100, 200,100,100,200 ,300, 250, 200],
-    }
-    return render_template('index.html', **model)
+    goods_price_vo: GoodsPricesVo = gm.get_goods_by_url(url_clean)
+    if goods_price_vo:
+        return render_template('index.html', **goods_price_vo.__dict__)
+    return render_template('index.html', err='无法获取商品信息！')

@@ -1,5 +1,5 @@
 class Goods:
-    def __init__(self, id: int, url: str, price: float, name: str):
+    def __init__(self, id: int = None, url: str = '', price: float = 0.0, name: str = ''):
         self.id = id
         self.url = url
         self.price = price
